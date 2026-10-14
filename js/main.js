@@ -91,14 +91,16 @@ function openLightbox(src, alt) {
   lightboxImg.alt = alt || "Captura ampliada";
   lightbox.classList.add("active");
   lightbox.setAttribute("aria-hidden", "false");
-  document.body.classList.add("lightbox-open");
+  document.documentElement.scrollLeft = 0;
+  document.body.scrollLeft = 0;
 }
 
 function closeLightbox() {
   if (!lightbox || !lightboxImg) return;
   lightbox.classList.remove("active");
   lightbox.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("lightbox-open");
+  document.documentElement.scrollLeft = 0;
+  document.body.scrollLeft = 0;
   setTimeout(() => {
     if (!lightbox.classList.contains("active")) {
       lightboxImg.src = "";
@@ -113,15 +115,9 @@ document.querySelectorAll(".shot").forEach((shot) => {
   });
 });
 
-if (lightboxClose) {
-  lightboxClose.addEventListener("click", closeLightbox);
-}
-
 if (lightbox) {
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
-      closeLightbox();
-    }
+  lightbox.addEventListener("click", () => {
+    closeLightbox();
   });
 }
 
@@ -130,3 +126,10 @@ window.addEventListener("keydown", (e) => {
     closeLightbox();
   }
 });
+
+// Prevenir cualquier desplazamiento horizontal involuntario
+window.addEventListener("scroll", () => {
+  if (window.scrollX !== 0) {
+    window.scrollTo(0, window.scrollY);
+  }
+}, { passive: true });
