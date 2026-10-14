@@ -79,3 +79,54 @@ window.addEventListener("pointermove", (e) => {
   glow.style.setProperty("--x", e.clientX + "px");
   glow.style.setProperty("--y", e.clientY + "px");
 });
+
+// Visor modal de imágenes (Lightbox)
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+const lightboxClose = document.getElementById("lightbox-close");
+
+function openLightbox(src, alt) {
+  if (!lightbox || !lightboxImg) return;
+  lightboxImg.src = src;
+  lightboxImg.alt = alt || "Captura ampliada";
+  lightbox.classList.add("active");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("lightbox-open");
+}
+
+function closeLightbox() {
+  if (!lightbox || !lightboxImg) return;
+  lightbox.classList.remove("active");
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lightbox-open");
+  setTimeout(() => {
+    if (!lightbox.classList.contains("active")) {
+      lightboxImg.src = "";
+    }
+  }, 250);
+}
+
+document.querySelectorAll(".shot").forEach((shot) => {
+  shot.addEventListener("click", () => {
+    const img = shot.querySelector("img");
+    if (img) openLightbox(img.src, img.alt);
+  });
+});
+
+if (lightboxClose) {
+  lightboxClose.addEventListener("click", closeLightbox);
+}
+
+if (lightbox) {
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && lightbox && lightbox.classList.contains("active")) {
+    closeLightbox();
+  }
+});
